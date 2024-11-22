@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh; background-color: rgb(202, 247, 247);">
+    <div class="p-4 pb-5" style="width: 60%; border: 2px solid black; border-radius: 12px;">
+
+        <form action="{{ url_for('main.login') }}" method="post">
+            <div class="p-3 my-3">
+                <h4 class="h4 text-center">Welcome user! Select your role to proceed!</h4>
+            </div>
+            <div class="mb-3">
+                <select name="selectRole" id="selectRole" class="form-select" aria-placeholder="Hello" style="text-align: center; background-color: rgb(202, 247, 247);" required>
+                    <option value="" disabled selected hidden>Choose role</option>
+                    <option value="admin" class="text-center">Admin</option>
+                    <option value="service professional" class="text-center">Service Professional</option>
+                    <option value="customer" class="text-center">Customer</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-info" style="width: 100%;">Submit</button>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

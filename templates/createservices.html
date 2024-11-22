@@ -1,0 +1,57 @@
+{% extends "admindb.html" %}
+
+{% block content %}
+<div class="w-80 p-3 container" style="border: 2px solid red; width: 90%">
+    <h2>Active Customer Details</h2>
+    <table class="table table-striped mt-5">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Service Name</th>
+                <th scope="col">Price</th>
+                <th scope="col">Time Required</th>
+                <th scope="col">Provider </th>
+                <th scope="col">Profile Completion Status</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in srv %}
+            <tr>
+                <td>{{ i.Service.id }}</td>
+                <td>{{ i.Service.name }}</td>
+                <td>{{ i.Service.price }}</td>
+                <td>{{ i.Service.time_required }} Days</td>
+                <td>{{ i.ServiceProfessional.name }}</td>
+                <td>
+                    {% if i.ServiceProfessional.address and i.ServiceProfessional.ph %}
+                    Complete
+                    {% else %}
+                    Incomplete
+                    {% endif %}
+                </td>
+                <td>{{ i.Service.status }}</td>
+                <td>
+                        {% if i.ServiceProfessional.address and i.ServiceProfessional.ph %}
+                        {% if i.Service.status == 'Approved' %}
+                        <form action="{{ url_for('main.createservices', id=i.Service.id) }}" method="post">
+                        <button type="submit" class="btn btn-warning" style="width: 150px;">Disapprove</button>
+                        </form>
+                        {% else %}
+                        <form action="{{ url_for('main.createservices', id=i.Service.id) }}" method="post">
+                        <button type="submit" class="btn btn-success" style="width: 150px;">Approve</button>
+                        </form>
+                        {% endif %}
+                        {% else %}
+                        <form action="{{ url_for('main.notifysp', email=i.ServiceProfessional.email) }}" method="post">
+                            <button type="submit" class="btn btn-info" style="width: 150px;">Notify</button>
+                        </form>
+                        {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends "dashboard.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block menu %}
+<a class="nav-link active my-auto" aria-current="page" href="{{ url_for('main.admindb') }}"><h3>Home</h3></a>
+<a class="nav-link my-auto" href="{{ url_for('main.customers') }}">View Customers</a>
+<a class="nav-link my-auto" href="{{ url_for('main.createservices', id=0) }}">Create Services</a>
+<a class="nav-link my-auto" href="{{ url_for('main.sps') }}">View Service Professionals</a>
+{% endblock %}
+
+{% block content %}
+
+
+<div class="text-center" style="display: flex; flex-direction: row; justify-content: flex-end; ">
+  <h4 style="background-color: #33FF57; margin: 2opx;" >Most active Customers 1</h4>
+  <h4 style="background-color: #ff3333; margin: 2opx;">Most active Customers 2</h4>
+  <h4 style="background-color: #33f8ff; margin: 2opx;">Most active Customers 3</h4>
+  <h4 style="background-color: #ff33da; margin: 2opx;">Most active Customers 4</h4>
+</div>]
+
+<div class="container mt-5" style="border:  2px solid black;">
+  <h2 class="m-4">Admin Dashboard</h2>
+
+  
+  <div class="d-flex justify-content-between">
+
+    
+    <div class="text-center">
+      <h4>Active Users</h4>
+      <div class="ct-chart-users ct-perfect-fourth" style="height: 350px; width: 420px;"></div>
+    </div>
+
+    
+    <div class="text-center">
+      <h4>Service Requests</h4>
+      <div class="ct-chart-requests ct-perfect-fourth" style="height: 350px; width: 350px;"></div>
+    </div>
+
+    <div class="text-center">
+      <h4>Users Status</h4>
+      <div class="ct-chart-verify ct-perfect-fourth" style="height: 350px; width: 350px;"></div>
+    </div>
+    
+  </div>
+
+  <div class="mt-5"></div>
+
+  <div class="d-flex justify-content-center">
+    <div class="text-center">
+      <h4>Best performing Service Professionals</h4>
+      <div class="ct-chart-top-sps ct-perfect-fourth" style="height: 350px; width: 700px;"></div>
+    </div>
+    <div class="text-center">
+      <h4>Most active Customers</h4>
+      <div class="ct-chart-top-customers ct-perfect-fourth" style="height: 350px; width: 500px;"></div>
+    </div>
+  </div>
+
+</div>
+
+<style>
+  .ct-series-a .ct-bar:nth-child(1) { stroke: #FF5733; }
+  .ct-label { color: #a600ff !important; }
+  
+
+  .ct-series-a .ct-bar:nth-child(2) { stroke: #33FF57; }
+  .ct-series-a .ct-bar:nth-child(3) { stroke: #FFD700; }
+  .ct-series-a .ct-bar:nth-child(4) { stroke: blue; }
+  .ct-series-a .ct-bar:nth-child(5) { stroke: orange; }
+  .ct-bar { stroke-width: 50px; }
+  .ct-label { font-size: large; color: black; font-weight: bold; }
+  .ct-pie { stroke-width: 1px; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+
+    
+    var dataUsers = {
+      labels: ['Customers', 'Service Professionals'],
+      series: [
+        [{{ values[0] }}, {{ values[1] }}]
+      ]
+    };
+    var options = { axisY: { onlyInteger: true } };
+    new Chartist.Bar('.ct-chart-users', dataUsers, options);
+
+    
+    var dataRequests = {
+      labels: ['Requested', 'Accepted', 'Completed'],
+      series: [{{ values[2]}}, {{ values[3]}}, {{ values[4]}}]
+    };
+    var pieOptions = { labelInterpolationFnc: function(value) { return value; } };
+    new Chartist.Pie('.ct-chart-requests', dataRequests, pieOptions);
+
+    
+    var dataVerify = {
+      labels: ['Verified Users', 'Guest Users'],
+      series: [
+        [{{ values[5] }}, {{ values[6] }}]
+      ]
+    };
+    new Chartist.Bar('.ct-chart-verify', dataVerify, options);
+
+    
+    var dataTopSPs = {
+      labels: {{ top_sps_labels | safe }},
+      series: [{{ top_sps_ratings | safe }}]
+    };
+    new Chartist.Bar('.ct-chart-top-sps', dataTopSPs, options);
+
+    
+    var dataTopCustomers = {
+      labels: {{ top_customers_labels | safe }},
+      series: [{{ top_customers_counts | safe }}]
+    };
+    new Chartist.Bar('.ct-chart-top-customers', dataTopCustomers, options);
+
+  });
+</script>
+
+{% endblock %}

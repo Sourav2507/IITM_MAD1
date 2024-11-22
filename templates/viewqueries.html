@@ -1,0 +1,53 @@
+{% if session['role']=='admin' %}
+
+{% extends "admindb.html" %}
+
+{% elif session['role']=='customer' %}
+
+{% extends "customerdb.html" %}
+
+{% else %}
+
+{% extends "spdb.html" %}
+
+{% endif %}
+
+{% block title %}Posted Queries{% endblock %}
+
+{% block content %}
+{% if queries %}
+<h2 class="my-5 container">Latest Updates</h2>
+
+<div class="container my-5 p-3" style="border: 2px solid rgb(56, 225, 255); border-radius: 12px;">
+    {% for q in queries|reverse %}
+    <div class="container">
+        <div class="container my-3">
+            <div class="container d-flex">
+                <div style="width: 90%;">
+                    <h3>{{q.subject}}</h3>
+                    <h5>Sender : {{q.sender_email}}</h5>
+                    <p>{{q.message}}</p>
+                    <p class="my-3">{{q.date_sent.strftime('%Y-%m-%d')}}</p>
+                </div>
+                <form action="{{ url_for('main.deletequery',q_id=q.id ) }}" method="POST" class="d-flex mx-1 align-items-center" style="justify-content: center;">
+                    <button type="submit" class="btn btn-danger" style="width: 150px;">Delete</button>
+                </form>
+            </div>
+
+            {% if session['role']=='admin' %}
+            <form action="{{ url_for('main.reply',q_id=q.id ) }}" method="POST" class="d-flex align-items-center mt-5"
+                style="justify-content: center; gap: 10px;">
+                <input type="text" name="reply" class="form-control" id="reply" placeholder="Reply Message"
+                    aria-describedby="emailHelp" required style="width: 85%;">
+                <button type="submit" class="btn btn-success" style="width: 150px;">Reply</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    <hr>
+    {% endfor %}
+</div>
+{% else %}
+<h2 class="container my-5">Your Inbox is empty right now !</h2>
+{% endif %}
+{% endblock %}

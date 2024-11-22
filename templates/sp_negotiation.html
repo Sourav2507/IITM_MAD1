@@ -1,0 +1,30 @@
+{% extends "customerdb.html" %}
+{% block title %}Service Professional Negotiate{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="p-4 pb-5" style="width: 60%; border: 2px solid black; border-radius: 12px;">
+        {% if sd %}
+        <h2 class="my-5 container text-center">Service Professional Negotiation Form</h2>
+        <div class="container">
+            <p class="m-3">Original Amount : {{sd.Service.price}}</p>
+            <p class="m-3">Offered Amount : {{sd.ServiceRequest.offered_amount}}</p>
+            <form action="{{ url_for('main.spnegotiate',id=sd.ServiceRequest.id) }}" method="post">
+                <div class="mb-3">
+                    <label for="new_price" class="form-label m-3">Enter your suggested price (you can negotiate any amount between the original and offered price) :</label>
+                    <input type="number" name="new_price" class="form-control" id="new_price"
+                           min="{{ sd.ServiceRequest.offered_amount }}" max="{{ sd.Service.price }}"
+                           step="1" placeholder="Enter a price">
+                </div>
+                
+    
+                <button type="submit" class="btn btn-info" style="width: 100%;">Submit</button>
+            </form>
+        </div>
+        {% else %}
+        <h1>{{sd}}</h1>
+        {% endif %}
+        
+    </div>
+</div>
+{% endblock %}

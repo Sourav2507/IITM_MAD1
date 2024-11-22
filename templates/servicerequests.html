@@ -1,0 +1,78 @@
+{% extends "spdb.html" %}
+{% block title %}Service Requests{% endblock %}
+
+{% block content %}
+{% if sr %}
+<h2 class="my-5 container">List of Active Service Requests</h2>
+<div class="container-fluid">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col" style="font-size: smaller;">Customer Name</th>
+                <th scope="col" style="font-size: smaller;">Service Name</th>
+                <th scope="col" style="font-size: smaller;">Address</th>
+                <th scope="col" style="font-size: smaller;">Contact Number</th>
+                <th scope="col" style="font-size: smaller;">Date of Request</th>
+                <th scope="col" style="font-size: smaller;">Service Status</th>
+                <th scope="col" style="font-size: smaller;">Original Price</th>
+                <th scope="col" style="font-size: smaller;">Offered Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in sr|reverse %}
+            <tr>
+                <td style="font-size: 12px;">{{ s.Customer.name }}</td>
+                <td style="font-size: 12px;">{{ s.Service.name }}</td>
+                <td style="font-size: 12px;">{{ s.Customer.address }}</td>
+                <td style="font-size: 12px;">{{ s.Customer.ph }}</td>
+                <td style="font-size: 12px;">{{ s.ServiceRequest.date_of_request.strftime('%Y-%m-%d') }}</td>
+                <td style="font-size: 12px;">{{ s.ServiceRequest.service_status }}</td>
+                <td style="font-size: 12px;">{{ s.Service.price }}</td>
+                <td style="font-size: 12px;">{{ s.ServiceRequest.offered_amount }}</td>
+                
+                {% if s.ServiceRequest.service_status == 'Requested' %}
+                <td>
+                    {% if s.ServiceRequest.offered_amount < s.Service.price %} <form
+                        class="my-3 d-flex justify-content-center align-items-center" action="{{ url_for('main.spnegotiate', id=s.ServiceRequest.id) }}" method="get"
+                        style="height: 100%;">
+                        <button type="submit" class="btn btn-info w-100" style="height: 100%;">Negotiate</button>
+                        </form>
+                        {% endif %}
+                </td>
+                <td>
+                    <form class="my-3 d-flex justify-content-center align-items-center"
+                        action="{{ url_for('main.accept_request', id=s.ServiceRequest.id) }}" method="post"
+                        style="height: 100%;">
+                        <button type="submit" class="btn btn-success w-100" style="height: 100%;",{% if s.Service.status != 'Approved' %} disabled {% endif %}>Accept
+                            Request</button>
+                    </form>
+                </td>
+                {% elif s.ServiceRequest.service_status == 'Accepted' %}
+                <td>
+                    <form class="my-3 d-flex justify-content-center align-items-center" action="{{ url_for('main.mark_complete', id=s.ServiceRequest.id) }}" method="post"
+                        style="height: 100%;">
+                        <button type="submit" class="btn btn-info w-100 " style="height: 100%;">Mark Complete</button>
+                    </form>
+                </td>
+                {% endif %}
+
+                <td>
+                    {% if s.ServiceRequest.service_status != 'Completed' %}
+                    <form class="my-3 d-flex justify-content-center align-items-center"
+                        action="{{ url_for('main.decline_request', id=s.ServiceRequest.id) }}" method="post"
+                        style="height: 100%;">
+                        <button type="submit" class="btn btn-danger w-100 " style="height: 100%;">Decline</button>
+                    </form>
+                    {% else %}
+                    <td style="font-size: 12px;">Payment Status : {{ s.ServiceRequest.payment_status }}</td>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<h4 class="container mt-4">No service requests available for this service professional.</h4>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "customerdb.html" %}
+{% block title %}My Service Requests{% endblock %}
+
+{% block content %}
+
+{% if requests %}
+<h2 class="my-5 container">List of My Service Requests</h2>
+{% else %}
+<h2 class="my-5 container">You have not requested for any Services yet!</h2>
+{% endif %}
+
+<div class="container mt-4">
+    <div class="row">
+        {% for req, service, professional in requests|reverse %}
+        <div class="col-md-4 mb-4 d-flex">
+            <div class="card m-2 w-100" style="border: 2px solid green; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-center m-3">{{ service.name }}</h5>
+                    <h6 class="card-subtitle m-3 text-muted">Provider: {{ professional.name }}</h6>
+                    <p class="card-text m-3">Phone: {{ professional.ph }}</p>
+                    <p class="card-text m-3">Address: {{ professional.address }}</p>
+                    <p class="card-text m-3">Original Price: {{ service.price }}</p>
+                    <p class="card-text m-3">Offered Price: {{ req.offered_amount }}</p>
+                    <p class="card-text m-3">Duration: {{ service.time_required }} days</p>
+                    {% if req.service_status == 'Completed' %}
+                    <p class="card-text m-3">Completion Date: {{req.date_of_completion.strftime('%Y-%m-%d')}}</p>
+                    {% endif %}
+                    <div class="card-text m-3">{{ service.description }}</div>
+                    <p class="card-text m-3">Status: <strong>{{ req.service_status }}</strong></p>
+                </div>
+                {% if req.service_status != 'Completed' %}
+                <div class="card-footer d-flex justify-content-between mt-auto">
+                    <form action="{{ url_for('main.cancel_request', request_id=req.id) }}" method="post" class="w-100">
+                        <button type="submit" class="btn btn-danger w-100 m-1">Cancel Request</button>
+                    </form>
+                </div>
+                {% elif req.service_status == 'Completed' and req.payment_status == 'pending' %}
+                <div class="card-footer d-flex justify-content-between mt-auto">
+                    <form action="{{ url_for('main.complete_payment', id=req.id) }}" method="get" class="w-100">
+                        <button type="submit" class="btn btn-success w-100">Close Service Request</button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if loop.index % 3 == 0 %}
+        </div><div class="row">
+        {% endif %}
+
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

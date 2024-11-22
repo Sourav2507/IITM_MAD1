@@ -1,0 +1,56 @@
+{% extends "customerdb.html" %}
+{% block title %}Service Details{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="p-4 pb-5" style="width: 60%; border: 2px solid black; border-radius: 12px;">
+        {% if sd %}
+
+        <h3 class="mt-1 container text-center">{{sd.Service.name}}</h3>
+        <div class="container my-3 text-center">
+            <span class="container mx-5" style="font-size: larger;">Service Provider :
+                {{sd.ServiceProfessional.name}}</span>
+            <span class="container mx-5" style="font-size: larger;">Email : {{sd.ServiceProfessional.email}}</span>
+        </div>
+        <div class="container my-3 text-center">
+            <span class="container mx-5" style="font-size: larger;">Price : {{sd.Service.price}}</span>
+            <span class="container mx-5" style="font-size: larger;">Expected time duration :
+                {{sd.Service.time_required}} days</span>
+        </div>
+        <div class="container my-3 text-center">
+            <span class="container mx-5" style="font-size: larger;">Experience : {{sd.ServiceProfessional.experience}}
+                years</span>
+            <span class="container mx-5" style="font-size: larger;">Service Professional Rating :
+                {{sd.Service.time_required}}</span>
+        </div>
+        <div class="container my-3 text-center">
+            <span class="container mx-5" style="font-size: larger;">Phone Number : {{sd.ServiceProfessional.ph}} </span>
+            <span class="container mx-5" style="font-size: larger;">Address : {{sd.ServiceProfessional.address}}</span>
+        </div>
+        <div class="container my-5 text-center">
+            <span class="container mx-5" style="font-size: larger;">{{sd.Service.description}} </span>
+        </div>
+
+        <div class="d-flex justify-content-center">
+
+            {% if sd.Service.id in active_service_ids %}
+            <button type="button" class="btn btn-secondary w-50" disabled>Requested</button>
+            {% else %}
+            <form action="{{ url_for('main.negotiate',id=sd.Service.id) }}" method="get"
+                class="w-50 me-2">
+                <button type="submit" class="btn btn-primary w-100">Negotiate</button>
+            </form>
+            <form action="{{ url_for('main.requestservice', id=sd.Service.id) }}" method="get" class="w-50">
+                <button type="submit" class="btn btn-success w-100">Request Service</button>
+            </form>
+            {% endif %}
+        </div>
+
+        {% else %}
+        <h2>Not found</h2>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

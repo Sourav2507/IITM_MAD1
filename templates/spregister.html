@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="p-4 pb-5" style="width: 60%; border: 2px solid black; border-radius: 12px;">
+
+        <form action="{{ url_for('main.direct') }}" method="post">
+            <div class="p-3 my-1">
+                <h4 class="h4 text-center">Sign up and start your journey!</h4>
+            </div>
+            <div class="mb-3">
+                <label for="registerName" class="form-label">Name</label>
+                <input type="text" name="name" class="form-control" id="registerName">
+            </div>
+            <div class="mb-3">
+                <label for="service_type" class="form-label">Service Type</label>
+                <select class="form-select" name="service_type" aria-label="Default select example">
+                    <option value="" disabled selected hidden></option>
+                    <option value="Electrician">Electrician</option>
+                    <option value="Plumber">Plumber</option>
+                    <option value="Carpenter">Carpenter</option>
+                    <option value="House Cleaner">House Cleaner</option>
+                    <option value="AC Technician">AC Technician</option>
+                    <option value="Pest Control Technician">Pest Control Technician</option>
+                  </select>
+            </div>
+            <div class="mb-3">
+                <label for="experience" class="form-label">Experience(in Years)</label>
+                <input type="number" name="experience" class="form-control" id="registerName">
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">Email address</label>
+              <input type="email" name="loginemail" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputPassword1" class="form-label">Password</label>
+              <input type="password" name="loginpassword" class="form-control" id="exampleInputPassword1" required>
+            </div>
+            <button type="submit" class="btn btn-primary"  style="width: 100%;">Register</button>
+        </form>
+        <div class="text-center mt-3">
+            <p>Already have an account? <a href="{{url_for('main.login')}}" style="text-decoration: none; color: rgb(16, 27, 53);">Login here</a></p>
+            <p style="background-color: rgb(181, 221, 255); border-radius: 12px;">Not a {{ session['role'] }}? <a href="{{url_for('main.logout')}}" style="text-decoration: none; color: rgb(16, 27, 53);">Go back</a></p>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

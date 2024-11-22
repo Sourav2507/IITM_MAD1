@@ -1,0 +1,117 @@
+{% extends "dashboard.html" %}
+
+{% block title %}Customer Dashboard{% endblock %}
+{% block menu %}
+
+<a class="nav-link active my-auto" aria-current="page" href="{{ url_for('main.customerdb') }}"><h3>Home</h3></a>
+<a class="nav-link my-auto" href="{{ url_for('main.services') }}">Services</a>
+<a class="nav-link my-auto" href="{{ url_for('main.my_requests') }}">Requested Services</a>
+<a class="nav-link my-auto" href="{{ url_for('main.postquery') }}">Post a Query</a>
+
+{% endblock %}
+
+{% block content %}
+{% if complete %}
+<div class="container">
+    <form action="{{ url_for('main.complete_customer_profile') }}" method="post">
+        <h2 class="my-5 container">Fill in Incomplete Details</h2>
+        {% if not c.address %}
+        <div class="mb-3">
+            <label for="customeraddress" class="form-label">Address</label>
+            <input type="text" name="customeraddress" class="form-control" id="customeraddress" required>
+        </div>
+        {% endif %}
+        {% if not c.ph %}
+        <div class="mb-3">
+            <label for="customerph" class="form-label">Phone Number</label>
+            <input type="text" name="customerph" class="form-control" id="customerph" required>
+        </div>
+        {% endif %}
+        <button type="submit" class="btn btn-success mb-3" style="width: 100%;">Confirm</button>
+    </form>
+</div>
+{% endif %}
+
+
+{% if not complete %}
+<h2 class="mt-5 container">Welcome {{c.username}}</h2>
+<div class="w-80 p-3 container-fluid mx-7 d-flex" style="justify-content: space-between;">
+    <div class="w-80 p-3 container mx-7" style=" width: 50%">
+        <div style="font-size: large;" class="my-2">Username : {{c.username}}</div>
+        <div style="font-size: large;" class="my-2">Email : {{c.email}}</div>
+        {% if c.address %}
+        <div style="font-size: large;" class="my-2">Address : {{c.address}}</div>
+        {% endif %}
+        <div style="font-size: large;" class="my-2">Email : {{c.email}}</div>
+        <div style="font-size: large;" class="my-2">Date of Joining : {{c.date_created.strftime('%Y-%m-%d')}}</div>
+        <div style="font-size: large;" class="my-2">Profile Status :
+            {% if c.address and c.ph %}
+            Complete
+            {% else %}
+            Incomplete
+            {% endif %}
+        </div>
+        
+    </div>
+    <div class="w-80 p-3 container mx-7" style="width: 30%">
+        {% if not c.address or not c.ph %}
+        <form class="my-3" action="{{ url_for('main.complete_customer_profile') }}" method="get">
+            <button type="submit" class="btn btn-warning" style="width: 100%;">Complete Profile</button>
+        </form>
+        {% endif %}
+        <form class="my-3" action="#" method="post">
+            <button type="submit" class="btn btn-info" style="width: 100%;">Update Profile</button>
+        </form>
+        <form class="my-3" action="#" method="post">
+            <button type="submit" class="btn btn-info" style="width: 100%;">Transaction History</button>
+        </form>
+        
+    </div>
+</div>
+<div class="container d-flex justify-content-between mt-5">
+    
+    <div class="text-center">
+        <h4>Service Requests</h4>
+        <div class="ct-chart-requests ct-perfect-fourth" style="height: 350px; width: 500px;"></div>
+    </div>
+    <div class="text-center">
+        <h4>Your Most trusted Service professionals</h4>
+        <table class="table table-striped table-bordered mt-3" style="width: 100%; margin: 0 auto;">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Name of Service Professionals</th>
+                    <th scope="col">Number of Requests Posted</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i, j in top_sps %}
+                <tr>
+                    <td>{{ i }}</td>
+                    <td>{{ j }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<style>
+    .ct-series-a .ct-bar:nth-child(1) { stroke: #FF5733; }
+    .ct-series-a .ct-bar:nth-child(2) { stroke: #33FF57; }
+    .ct-series-a .ct-bar:nth-child(3) { stroke: #FFD700; }
+    .ct-series-a .ct-bar:nth-child(4) { stroke: blue; }
+    .ct-series-a .ct-bar:nth-child(5) { stroke: orange; }
+    .ct-bar { stroke-width: 50px; }
+    .ct-label { font-size: large; color: black; font-weight: bold; }
+    .ct-pie { stroke-width: 1px; }
+</style>
+<script>
+    var dataUsers = {
+        labels: ['Requested', 'Accepted', 'Completed'],
+        series: [[{{ values[0] }}, {{ values[1] }}, {{ values[2] }}]]
+    };
+    var options = { axisY: { onlyInteger: true } };
+    new Chartist.Bar('.ct-chart-requests', dataUsers, options);
+</script>
+
+{% endif %}
+{% endblock %}

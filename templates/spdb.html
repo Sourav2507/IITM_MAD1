@@ -1,0 +1,184 @@
+{% extends "dashboard.html" %}
+
+{% block title %}Service Professional Dashboard{% endblock %}
+
+{% block menu %}
+<a class="nav-link active my-auto" aria-current="page" href="{{ url_for('main.spdb') }}">
+    <h3>Home</h3>
+</a>
+<a class="nav-link my-auto" href="{{ url_for('main.servicerequests') }}">Service Requests</a>
+<a class="nav-link my-auto" href="{{ url_for('main.postquery') }}">Post a Query</a>
+{% endblock %}
+
+{% block content %}
+{% if complete %}
+<div class="container">
+    <form action="{{ url_for('main.completespprofile') }}" method="post">
+        <h2 class="my-5 container">Fill in Incomplete Details</h2>
+        {% if not sp.address %}
+        <div class="mb-3">
+            <label for="spaddress" class="form-label">Address</label>
+            <input type="text" name="spaddress" class="form-control" id="spaddress" required>
+        </div>
+        {% endif %}
+        {% if not sp.ph %}
+        <div class="mb-3">
+            <label for="spph" class="form-label">Phone Number</label>
+            <input type="text" name="spph" class="form-control" id="spph" required>
+        </div>
+        {% endif %}
+        <button type="submit" class="btn btn-success mb-3" style="width: 100%;">Confirm</button>
+    </form>
+</div>
+{% endif %}
+
+{% if not complete %}
+<h2 class="mt-5 container">Welcome {{sp.username}}</h2>
+<div class="w-80 p-3 container-fluid mx-7 d-flex" style="justify-content: space-between;">
+    <div class="w-80 p-3 container mx-7" style=" width: 50%">
+        <div style="font-size: large;" class="my-2">Username : {{sp.username}}</div>
+        <div style="font-size: large;" class="my-2">Email : {{sp.email}}</div>
+        <div style="font-size: large;" class="my-2">Service Type : {{sp.service_type}}</div>
+        <div style="font-size: large;" class="my-2">Work Experience (in Years) : {{sp.experience}}</div>
+        <div style="font-size: large;" class="my-2">Date of Joining : {{sp.date_created.strftime('%Y-%m-%d')}}</div>
+        <div style="font-size: large;" class="my-2">Verification Status :
+            {% if sp.is_verified %}
+            Verified
+            {% else %}
+            Not Verified
+            {% endif %}
+        </div>
+        <div style="font-size: large;" class="my-2">
+            {% if sp.is_verified %}
+            Verification Date : {{sp.date_verified.strftime('%Y-%m-%d')}}
+            {% endif %}
+        </div>
+    </div>
+    <div class="w-80 p-3 container mx-7" style="width: 30%">
+        {% if not sp.address or not sp.ph %}
+        <form class="my-3" action="{{ url_for('main.completespprofile') }}" method="get">
+            <button type="submit" class="btn btn-warning" style="width: 100%;">Complete Profile</button>
+        </form>
+        {% endif %}
+        <form class="my-3" action="#" method="post">
+            <button type="submit" class="btn btn-info" style="width: 100%;">Update Profile</button>
+        </form>
+        
+        <form class="my-3" action="#" method="post">
+            <button type="submit" class="btn btn-info" style="width: 100%;">Transaction History</button>
+        </form>
+        {% if service and sp.is_verified %}
+        <form class="my-3" action="{{url_for('main.discontinueservice', sp_id=sp.email)}}" method="post">
+            <button type="submit" class="btn btn-danger" style="width: 100%;">Discontinue Service</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+<div class="container mb-7" style="width: 95%; border: 2px solid rgb(2, 131, 17); border-radius: 12px;">
+    {% if not sp.is_verified %}
+    <h2 class="my-5 container">You can start a Service only after getting Verified. Please wait till we verify your
+        profile. </h2>
+    {% else %}
+    {% if not service or editing_service %}
+    <form
+        action="{% if editing_service %}{{ url_for('main.editservice') }}{% else %}{{ url_for('main.addservice') }}{% endif %}"
+        method="post">
+        <h2 class="my-5 container">{% if service %}Edit Current Details{% else %}You are now verified. You can create a new service{% endif %}</h2>
+        <div class="mb-3">
+            <label for="serviceName" class="form-label">Service Name</label>
+            <input type="text" name="serviceName" class="form-control" id="serviceName"
+                placeholder="{% if service %}{{service.name}}{% endif %}" required>
+        </div>
+        <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            <input type="number" name="price" class="form-control" id="price"
+                placeholder="{% if service %}{{service.price}}{% endif %}" required>
+        </div>
+        <div class="mb-3">
+            <label for="time" class="form-label">Estimated Time Required (in days)</label>
+            <input type="number" name="time" class="form-control" id="time"
+                placeholder="{% if service %}{{service.time_required}}{% endif %}" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <input type="text" name="description" class="form-control" id="description"
+                placeholder="{% if service %}{{service.description}}{% endif %}" required>
+        </div>
+        <button type="submit" class="btn btn-success mb-3" style="width: 100%;">Confirm</button>
+    </form>
+    {% elif service.status == 'Requested' %}
+    <h2 class="my-5 container">Service request posted. Please wait until it is created.</h2>
+    {% elif service.status == 'Disapproved' %}
+    <h2 class="my-5 container">Service discontinued temporarily. Please post a query for further details.</h2>
+    {% else %}
+    <h2 class="mt-5 container">Service Details</h2>
+    <div class="container m-4">
+        <div style="font-size: large;" class="my-2">Service Name : {{service.name}}</div>
+        <div style="font-size: large;" class="my-2">Price : {{service.price}} INR</div>
+        <div style="font-size: large;" class="my-2">Duration : {{service.time_required}} days</div>
+        <div style="font-size: large;" class="my-2">Description : {{service.description}}</div>
+        <form class="my-3" action="{{ url_for('main.editservice') }}" method="get">
+            <button type="submit" class="btn btn-info mr-5" style="width: 95%;">Update Service Details</button>
+        </form>
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+
+
+<div class="container d-flex justify-content-between mt-5">
+    <div class="text-center">
+        <h4>Service Requests</h4>
+        <div class="ct-chart-requests ct-perfect-fourth" style="height: 350px; width: 500px;"></div>
+    </div>
+
+    <div class="text-center">
+        <h4>Your Most Active Customers</h4>
+        <table class="table table-striped table-bordered mt-3" style="width: 100%; margin: 0 auto;">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Name of Customer</th>
+                    <th scope="col">Number of Requests Posted</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i, j in top_customers %}
+                <tr>
+                    <td>{{ i }}</td>
+                    <td>{{ j }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>    
+</div>
+
+
+
+
+<style>
+    .ct-series-a .ct-bar:nth-child(1) { stroke: #FF5733; }
+    .ct-series-a .ct-bar:nth-child(2) { stroke: #33FF57; }
+    .ct-series-a .ct-bar:nth-child(3) { stroke: #FFD700; }
+    .ct-series-a .ct-bar:nth-child(4) { stroke: blue; }
+    .ct-series-a .ct-bar:nth-child(5) { stroke: orange; }
+    .ct-bar { stroke-width: 50px; }
+    .ct-label { font-size: large; color: black; font-weight: bold; }
+    .ct-pie { stroke-width: 1px; }
+</style>
+
+<script>
+    // Bar chart for service requests (existing)
+    var dataUsers = {
+        labels: ['Requested', 'Accepted', 'Completed'],
+        series: [[{{ values[0] }}, {{ values[1] }}, {{ values[2] }}]]
+    };
+    var options = { axisY: { onlyInteger: true } };
+    new Chartist.Bar('.ct-chart-requests', dataUsers, options);
+
+</script>
+
+
+
+{% endif %}
+{% endblock %}

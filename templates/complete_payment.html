@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="p-4 pb-5" style="width: 60%; border: 2px solid black; border-radius: 12px;">
+
+        <form action="{{ url_for('main.complete_payment',id=sr.id) }}" method="post">
+            <div class="p-3 my-3">
+                <h4 class="h4 text-center">Complete Payment</h4>
+            </div>
+            <div class="mb-3">
+                <div class='mb-2' style="font-size: large;">Service Provider : {{sp.name}}</div>
+            </div>
+            <div class="mb-3">
+                <div class='mb-2' style="font-size: large;">Service Price : {{sr.offered_amount}} INR</div>
+            </div>
+            <div class="mb-3">
+              <label for="rating" class="form-label" >Rating</label>
+              <input type="number" name="rating" class="form-control" id="rating" aria-describedby="emailHelp" min="0" max="5" required>
+            </div>
+            <div class="mb-3">
+              <label for="description" class="form-label">Feedback</label>
+              <input type="text" name="description" class="form-control" id="description" required>
+            </div>
+            <button type="submit" class="btn btn-info" style="width: 100%;">Complete</button>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

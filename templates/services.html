@@ -1,0 +1,63 @@
+{% extends "customerdb.html" %}
+{% block title %}Services{% endblock %}
+
+{% block content %}
+<h2 class="my-5 container">List of Active Services</h2>
+
+<div class="container p-1" style="border: 2px solid rgb(10, 178, 255); border-radius: 12px;">
+    <form action="/service_list" class="container d-flex" method="GET" >
+        <input type="text" name="search" placeholder="Search for services..." class="form-control m-2" value="{{ request.args.get('search', '') }}">
+        <button type="submit" class="btn btn-info mt-2" style="width: 20%; height: fit-content;">Search</button>
+    </form>
+</div>
+
+<div class="container mt-4">
+    <div class="row">
+        {% set has_services = false %}
+        {% for s, p in service %}
+        {% if s.status == 'Approved' %}
+        {% set has_services = true %}
+        <div class="col-md-4 mb-4 d-flex">
+            <div class="card m-2 w-100" style="border: 2px solid green; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-center m-3">{{ s.name }}</h5>
+                    <h6 class="card-subtitle m-3 text-muted">Provider: {{ p.name }}</h6>
+                    <p class="card-text m-3">Phone: {{ p.ph }}</p>
+                    <p class="card-text m-3">Address: {{ p.address }}</p>
+                    <p class="card-text m-3">Price: {{ s.price }}</p>
+                    <p class="card-text m-3">Rating: 
+                        {% if s.rating_count > 0 %}
+                        {{ (s.rating / s.rating_count) | round(1) }}
+                        {% else %}
+                        0
+                        {% endif %}
+                    </p>                    
+                    <p class="card-text m-3">Duration: {{ s.time_required }} days</p>
+                    <div class="card-text m-3">{{ s.description }}</div>
+                </div>
+                <div class="card-footer d-flex justify-content-between mt-auto">
+                    <form action="{{ url_for('main.servicedetails', id=s.id) }}" method="get" class="w-50 me-2">
+                        <button type="submit" class="btn btn-primary w-100">Details</button>
+                    </form>
+                    
+                    {% if s.id in active_service_ids %}
+                        <button type="button" class="btn btn-secondary w-50" disabled>Requested</button>
+                    {% else %}
+                        <form action="{{ url_for('main.requestservice', id=s.id) }}" method="get" class="w-50">
+                            <button type="submit" class="btn btn-success w-100">Request Service</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        
+        {% if has_services %}
+            <div class="col-12 text-center">
+                <h4 class="mt-5">No Services posted yet</h4>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

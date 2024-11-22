@@ -1,0 +1,27 @@
+{% extends "customerdb.html" %}
+{% block title %}Negotiate{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="p-4 pb-5" style="width: 60%; border: 2px solid black; border-radius: 12px;">
+        {% if sd %}
+        <h2 class="my-5 container text-center">Negotiation Form</h2>
+        <div class="container">
+            <p class="m-3">Current Amount : {{sd.Service.price}}</p>
+            <form action="{{ url_for('main.negotiate',id=sd.Service.id) }}" method="post">
+                <div class="mb-3">
+                    <label for="new_price" class="form-label m-3">Enter your suggested price (you can negotiate upto 50% of the set amount) :</label>
+                    <input type="number" name="new_price" class="form-control" id="new_price"
+                           min="{{ sd.Service.price * 0.5 }}" max="{{ sd.Service.price }}"
+                           step="1" placeholder="Enter a price">
+                </div>
+                
+    
+                <button type="submit" class="btn btn-info" style="width: 100%;">Submit</button>
+            </form>
+        </div>
+
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

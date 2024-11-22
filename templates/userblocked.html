@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="p-4 pb-5" style="width: 60%; border: 2px solid black; border-radius: 12px;">
+        <div class="p-3 my-3">
+            <h4 class="h4 text-center">Your account has been blocked due to the detection of inappropriate activities.
+                Please contact the administrator or create a new account.</h4>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <form action="{{ url_for('main.direct') }}" method="get" class="flex-grow-1 mx-2">
+                <button type="submit" class="btn btn-primary w-100">Try logging in</button>
+            </form>
+            <form action="{{ url_for('main.postquery') }}" method="get" class="flex-grow-1 mx-2">
+                <button type="submit" class="btn btn-primary w-100">Contact Admin</button>
+            </form>
+            <form action="{{ url_for('main.logout') }}" method="get" class="flex-grow-1 mx-2">
+                <button type="submit" class="btn btn-primary w-100">Create a new account</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "admindb.html" %}
+
+
+{% block content %}
+<div class="w-80 p-3 container" style="border: 2px solid red; width: 90%">
+    <h2>Active Customer Details</h2>
+    <table class="table table-striped mt-5">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Username</th>
+                <th scope="col">Email</th>
+                <th scope="col">Date Joined</th>
+                <th scope="col">Blocked Status</th>
+                <th scope="col">Verification Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in Customer %}
+            {% if not user.admin_access %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.date_created.strftime('%Y-%m-%d') }}</td>
+                <td>{{ user.is_blocked }}</td>
+                <td>
+                    {% if user.address %}
+                    Verified
+                    {% else %}
+                    Not Verified
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.is_blocked %}
+                        <form action="{{ url_for('main.unblock_customer', customer_id=user.id) }}" method="post">
+                            <button type="submit"  class="btn btn-info" style="width: 150px;">Unblock</button>
+                        </form>
+                    {% else %}
+                        <form action="{{ url_for('main.block_customer', customer_id=user.id) }}" method="post">
+                            <button type="submit"  class="btn btn-warning" style="width: 150px;">Block</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

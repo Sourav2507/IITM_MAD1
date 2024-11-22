@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="p-4 pb-5" style="width: 60%; border: 2px solid black; border-radius: 12px;">
+
+        <form action="{{ url_for('main.postquery') }}" method="post">
+            <div class="p-3 my-3">
+                <h4 class="h4 text-center">{% block message %}Hello {{session['role']}}! Please post your Query{% endblock %}</h4>
+            </div>
+            <div class="mb-3">
+                <div class='mb-2' style="font-size: large;">Sender : {{session['email']}}</div>
+              </div>
+            <div class="mb-3">
+              <label for="topic" class="form-label" >Subject</label>
+              <input type="text" name="topic" class="form-control" id="topic" aria-describedby="emailHelp" required>
+            </div>
+            <div class="mb-3">
+              <label for="description" class="form-label">Description</label>
+              <input type="text" name="description" class="form-control" id="description" required>
+            </div>
+            <button type="submit" class="btn btn-success" style="width: 100%;">Post Query</button>
+        </form>
+
+        <form action="{{ url_for('main.login') }}" method="post">
+            <button type="submit" class="btn btn-warning my-2" style="width: 100%;">Return without posting</button>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
